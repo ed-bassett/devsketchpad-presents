@@ -1,0 +1,114 @@
+<%once>
+use Presents::Presents qw(
+	add_item
+	set_preference
+);
+</%once>
+<%args>
+$action_add  => q{}
+
+$name        => q{}
+$category_id => q{}
+$description => q{}
+
+$like        => undef
+
+$comment     => q{}
+$price       => q{}
+$multiple    => q{}
+$quantity    => 1
+</%args>
+<%method tab>
+<%init>
+return q{Add a gift};
+</%init>
+</%method>
+<%init>
+
+our $user;
+
+my $message = q{};
+
+if( $action_add )
+{
+	$quantity = $multiple ? 0 : 1;
+
+	if ( $name =~ m{^\s*$}smx )
+	{
+		$message = q{<p class="error">Please enter a name</p>};
+	}
+	elsif ( not $category_id )
+	{
+		$message = q{<p class="error">Please select a category</p>};
+	}
+	elsif ( $price =~ m{\D}smx )
+	{
+		$message = q{<p class="error">Please enter only a number (of dollars) for price</p>};
+	}
+	else
+	{
+		my $new_item_id = add_item({
+			'name'        => $name,
+			'category_id' => $category_id,
+			'description' => $description  || undef,
+		});
+
+		set_preference({
+			'person'     => $user->{'id'},
+			'item'       => $new_item_id,
+			'preference' => $like ? q{y} : q{n},
+			( $like
+				? (
+					'quantity'   => $quantity,
+					'comment'    => $comment || undef,
+					'price'      => $price   || undef,
+				)
+				: ()	
+			)
+		});
+
+		$message = qq{<p class="success">Successfully added '$name'</p>};
+		($name, $category_id, $price, $description, $like, $comment, $multiple) = (q{},q{},q{},q{},1,q{},q{});
+	}
+}
+else
+{
+	$like=1;
+}
+
+</%init>
+
+<form method="post" action="/add.html" class="affects_parent loads_content">
+	<h2>Item details</h2>
+	<% $message |n %>
+	<table class="data" width="100%" cellpadding="0" cellspacing="0">
+	<&'/item_form.comp',
+		'name'        => $name,
+		'category_id' => $category_id,
+		'description' => $description  || undef,
+	&>
+	</table>
+	<h2>Your preference</h2>
+<table id="preference_form" class="data" width="100%" cellpadding="0" cellspacing="0">
+<tr>
+	<td width="120">Would like this</td>
+	<td width="240">
+		<input id="like" type="checkbox" name="like" value="1"<% $like ? q{ checked="checked"} : q{} |n %> />
+	</td>
+	<td><p class="help">Would you like to receive this item?</p></td>
+</tr>
+	<&'/preference_form.comp',
+		'comment'  => $comment,
+		'price'    => $price        || undef,
+		'multiple' => $multiple,
+	&>
+</table>
+<table class="data" width="100%" cellpadding="0" cellspacing="0">
+<tr>
+	<td width="120"></td>
+	<td width="240"><input name="action_add" type="submit" value="Add" class="button" /></td>
+	<td></td>
+</tr>
+</table>
+
+</form>

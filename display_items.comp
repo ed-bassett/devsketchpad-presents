@@ -1,0 +1,61 @@
+<%args>
+@items
+$show_price => q{}
+$name
+</%args>
+<%init>
+my @options = qw(Y N);
+
+my %categorised_items = ();
+
+foreach my $item ( @items )
+{
+	push @{$categorised_items{$item->{'category'}}}, $item;
+}
+
+</%init>
+<table class="data depends_<% $name %><% $name eq q{dontwant} ? q{ hidden} : q{} %>" width="100%" cellpadding="0" cellspacing="0">
+<tbody>
+% foreach my $category (sort keys %categorised_items) {
+<tr>
+	<td colspan="2">
+		<h3><% $category |h %></h3>
+	</td>
+</tr>
+% foreach my $item ( sort { lc($a->{'name'}) cmp lc($b->{'name'}) } @{$categorised_items{$category}}) {
+% 	my $preference = $item->{'preference'} || q{};
+<tr>
+	<td width="0%" style="white-space:nowrap">
+	<div class="choice">\
+% foreach my $option ( @options ) {
+% 	if ( defined $item->{'preference_id'} ) {
+<a href="/preference.html?preference_id=<% $item->{'preference_id'} %>&amp;preference=<% $option |u %>" class="button has_action<% lc($preference) eq lc($option) ? q{ selected} : q{} |h %>"><% $option |n %></a>\
+% 	} else {
+<a href="/preference.html?item_id=<% $item->{'id'} %>&amp;preference=<% $option |u %>"class="button has_action"><% $option |n %></a>\
+% 	}
+% }
+% # <a class="button has_action">Add comment</a>\
+	</div>
+	</td>
+% if ( $show_price ) {
+% }
+	<td width="100%">
+		<& '/display_item.comp',
+			'item'         => $item,
+			'show_removed' => q{},
+		&>
+<!--
+		<p><% ucfirst($item->{'name'}) |h %></p>
+% if ( defined $item->{'comment'} ) {
+		<p class="comment"><% $item->{'comment'} || q{} |h %></p>
+% }
+-->		<a class="loads_content affects_popup_content button icon" style="background-image: url('/assets/images/edit.png');"  href="/edit.html?id=<% $item->{'id'} |h %>"></a>
+% if ( defined $item->{'preference_id'} and $item->{'preference'} ne q{n} ) {
+		<a class="loads_content affects_popup_content button icon" style="background-image: url('/assets/images/comment.png');" href="/comment.html?preference_id=<% $item->{'preference_id'} |u %>&amp;item_name=<% $item->{'name'} |u %>"></a>
+% }
+	</td>
+</tr>
+% }
+% }
+</tbody>
+</table>

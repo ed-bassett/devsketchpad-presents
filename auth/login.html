@@ -1,0 +1,32 @@
+<%init>
+
+my $reason = $r->prev->subprocess_env("AuthCookieReason");
+
+</%init>
+<html>
+<head>
+<title>Presents</title>
+</head>
+<body>
+% if ( $reason eq q{bad_credentials} ) {
+<p>Your username or password was incorrect. Please try again.</p>
+% }
+<form method="post" action="/LOGIN">
+<input type="hidden" name="destination" value="<% $r->prev->uri %>">
+<table align="left">
+<tr>
+<td align="right"><b>Username:</b></td>
+<td><input type="text" name="credential_0" size="10"></td>
+</tr>
+<tr>
+<td align="right"><b>Password:</b></td>
+<td><input type="password" name="credential_1" size="10"></td>
+</tr>
+<tr>
+<td colspan="2" align="center"><input type="submit" value="Continue"></td>
+</tr>
+</table>
+</form>
+
+</body>
+</html>

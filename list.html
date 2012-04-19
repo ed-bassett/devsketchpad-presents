@@ -1,0 +1,21 @@
+<%once>
+use Presents::Presents qw(
+	get_items
+);
+</%once>
+<%init>
+my @items = @{get_items()};
+</%init>
+
+<table>
+<thead>
+	<th></th>
+</thead>
+<tbody>
+% foreach my $item (@items) {
+	<tr>
+		<td><% $item->{'name'} |h %></td>
+	</tr>
+% }
+</tbody>
+</table>

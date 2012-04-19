@@ -1,0 +1,139 @@
+<%once>
+
+use Presents::User qw(
+	get_people
+);
+
+use Presents::Presents qw(
+	get_items_for
+);
+
+</%once>
+<%args>
+$person_id => undef
+</%args>
+<%method tab>
+<%init>
+return q{Find gifts};
+</%init>
+</%method>
+<%init>
+
+our $user;
+
+if ( $person_id == $user->{'id'} )
+{
+	$m->out(q{You can't view your own list});
+	return;
+}
+
+my @items = ();
+if ( defined $person_id )
+{
+	@items = @{ get_items_for({
+		'id' => $person_id,
+	}) };
+	
+	@items = grep { $_->{'preference'} ne q{n} } @items;
+}
+
+my @people = @{get_people()};
+
+my %categorised_items = (
+	'available'   => [],
+	'unavailable' => [],
+	'chosen'      => [],
+);
+
+foreach my $item ( @items )
+{
+	if ( scalar @{$item->{'gifts'}} ) {
+		if ( grep {$_->{'from_person_id'} == $user->{'id'}} @{$item->{'gifts'}} )
+		{
+			$item->{'button'} = {
+				'link' => q{/choose.html?gift_id=} . uri_escape((grep {$_->{'from_person_id'} == $user->{'id'}} @{$item->{'gifts'}})[0]->{'gift_id'}),
+				'name' => q{Unchoose},
+			};
+			push @{$categorised_items{'chosen'}}, $item;
+		}
+		elsif ( scalar @{$item->{'gifts'}} < $item->{'quantity'} or $item->{'quantity'} <= 0 )
+		{
+			$item->{'button'} = {
+				'link' => q{/choose.html?to_id=} . uri_escape($person_id) . q{&item_id=} . uri_escape($item->{'id'}),
+				'name' => q{Choose&nbsp;+1},
+			};
+			push @{$categorised_items{'available'}}, $item;
+		}
+		else
+		{
+			$item->{'button'} = {
+				'name' => q{Already taken},
+			};
+			push @{$categorised_items{'unavailable'}}, $item;
+		}
+	}
+	else
+	{
+		$item->{'button'} = {
+			'link' => q{/choose.html?to_id=} . uri_escape($person_id) . q{&item_id=} . uri_escape($item->{'id'}),
+			'name' => 'Choose',
+		};
+		push @{$categorised_items{'available'}}, $item;
+ 	}
+}
+
+</%init>
+<script type="text/javascript">
+
+</script>
+<!--<h3>Show presents for:</h3>-->
+<div id="page_gifts_wrapper">
+<div id="page_gifts">
+<div class="tabs">
+% PERSON:foreach my $person ( sort {$a->{'name'} cmp $b->{'name'}} @people ) {
+% next PERSON if $person->{'id'} eq $user->{'id'};
+<a class="tab person<% $person_id == $person->{'id'} ? q{ selected} : q{} |h %> affects_content" href="/gifts.html?person_id=<% $person->{'id'} |u %>"><% $person->{'name'} |h %></a>\
+% }
+</div>
+
+% if ( defined $person_id ) {
+<table width="100%" class="data" cellpadding="0" cellspacing="0">
+% if ( scalar @items == 0 ) {
+<tr>
+	<td><p><% (grep {$_->{'id'} == $person_id} @people )[0]->{'name'} |h %> hasn't yet selected any presents.</p></td>
+</tr>	
+% }
+% foreach my $category ( sort keys %categorised_items ) {
+% if ( scalar @{$categorised_items{$category}} > 0 ) {
+<tr>
+	<td colspan="2">
+		<h3  class="controller controls_<% $category |h %><% $category eq q{unavailable} ? q{ collapsed} : q{} |n %>"><% ucfirst($category) |h %></h3>
+	</td>
+</tr>
+% 	foreach my $item ( sort { lc($a->{'name'}) cmp lc($b->{'name'}) }@{$categorised_items{$category}} ) {
+<tr class="depends_<% $category |h %><% $category eq q{unavailable} ? q{ hidden} : q{} |h %>">
+	<td width="110">
+%		if ( $item->{'button'}{'link'} ) {
+			<a class="choose button" href="<% $item->{'button'}{'link'} |h %>"><% $item->{'button'}{'name'} |n %></a>
+% 		} else {
+			<p>Already taken</p>	
+% 		}
+	<td width="100%">
+		<& '/display_item.comp', 'item' => $item &>
+	</td>
+</tr>
+% 	}
+% }
+% }
+</table>
+% } else {
+<table width="100%" class="data">
+<tr>
+	<td>Click someone's name to find gifts for them.</td>
+</tr>
+</table>
+	
+% }
+
+</div>
+</div>

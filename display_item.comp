@@ -1,0 +1,19 @@
+<%args>
+$item
+$show_removed => 1
+</%args>
+<%init>
+	
+our $user;
+
+$item->{'comment'} =~ s{(http://[\w./?&-]*)}{<a href="$1">link</a>}smxg;
+
+</%init>
+
+% if ( $show_removed ) {
+<% $item->{'preference'} eq q{n} ? q{<p class="alert">Removed</p>} : q{} |n %>
+% }
+<% defined $item->{'people_buying'} ? q{<p><strong>} . $item->{'people_buying'} . q{</strong></p>} : q{} |n %>	
+<p><% $item->{'name'} |h %></p>
+<p class="comment"><% $item->{'comment'} || q{} |n %></p>
+<% $item->{'price'} ?  q{<p>($}. $item->{'price'} . q{)</p>} : q{} %>

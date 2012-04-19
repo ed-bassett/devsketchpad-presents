@@ -1,0 +1,32 @@
+<%once>
+use Presents::Presents qw(
+	choose_gift
+	remove_gift_choice
+);
+</%once>
+<%args>
+$to_id   => undef
+$item_id => undef
+$gift_id => undef
+</%args>
+<%init>
+
+our $user;
+
+if ( defined $gift_id )
+{
+	remove_gift_choice({
+		'gift_id' => $gift_id,
+	});	
+}
+else
+{
+	return if not defined $to_id or not defined $item_id;
+	choose_gift({
+		'from_id' => $user->{'id'},
+		'to_id'   => $to_id,
+		'item_id' => $item_id,
+	});	
+}
+
+</%init>

@@ -1,0 +1,54 @@
+<%once>
+
+use Presents::User qw(
+	get_person
+);
+
+use Presents::Presents qw(
+	get_gifts_from
+);
+
+</%once>
+<%method tab>
+<%init>
+return q{Shopping list};
+</%init>
+</%method>
+<%init>
+
+our $user;
+
+my @all_items = @{ get_gifts_from({
+	'id' => $user->{'id'},
+}) };
+
+my %items_for = ();
+
+foreach my $item ( @all_items )
+{
+	my @people_buying = @{$item->{'from_names'}};
+	if ( scalar @people_buying > 1 )
+	{
+		@people_buying = map { $_ eq $user->{'name'} ? q{you} : $_ } @people_buying;
+		push @people_buying, (pop @people_buying) . q{ and } . (pop @people_buying);
+		$item->{'people_buying'} = ucfirst(join( q{, }, @people_buying ));
+	}
+	
+	push @{$items_for{get_person({'id'=>$item->{'to_person_id'}})->{'firstname'}}}, $item;
+}
+
+</%init>
+% while ( my ($person, $items) = each %items_for ) {
+<h2><% $person |h %></h2>
+<table class="data" width="100%">
+% 	foreach my $item ( @{$items} ) {
+<tr>
+	<td>
+		<a class="choose button" href="/choose.html?gift_id=<% $item->{'gift_id'} |u %>">Unchoose</a>
+		<& '/display_item.comp', 'item' => $item &>
+	</td>
+</tr>
+% 	}
+</table>
+% }
+</ul>

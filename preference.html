@@ -1,0 +1,35 @@
+<%once>
+use Presents::Presents qw(
+	set_preference
+	update_preference
+);
+</%once>
+<%args>
+$preference_id => q{}
+$item_id       => q{}
+
+$preference    => q{}
+</%args>
+<%init>
+
+return if not grep { lc($preference) eq $_ } qw(y n m c);
+
+if ( $preference_id )
+{
+	update_preference({
+		'preference_id' => $preference_id,
+		'preference'    => lc($preference),
+	});	
+}
+elsif ( $item_id )
+{
+	our $user;
+
+	set_preference({
+		'person'     => $user->{'id'},
+		'item'       => $item_id,
+		'preference' => lc($preference),
+	});
+}
+
+</%init>

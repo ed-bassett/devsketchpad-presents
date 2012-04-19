@@ -1,0 +1,68 @@
+<%once>
+use Presents::Presents qw(
+	update_preference
+	get_preference
+);
+</%once>
+<%args>
+$action_save   => q{}	
+
+$preference_id => undef
+$comment       => q{}
+$price         => q{}
+$multiple      => q{}
+$quantity      => 1
+
+$item_name     => q{}
+</%args>
+<%init>
+
+$m->out(q{<h2>Your preferences for "} . encode_entities($item_name) . q{"</h2>});
+
+if( $action_save )
+{
+	$quantity = $multiple ? 0 : 1;
+
+	update_preference({
+		'preference_id' => $preference_id,
+		'quantity'      => $quantity,
+		'price'         => $price ne q{} ? $price : undef,
+		'comment'       => $comment,
+	});
+
+	$m->out(qq{<p class="success">Successfully saved comment</p>});
+	
+	return;
+}
+else
+{
+	my $preference = get_preference({'id' => $preference_id});
+
+	($comment, $price, $quantity) = @{$preference}{qw(comment price quantity)};
+	if ( not defined $quantity )
+	{
+		$quantity = 1;
+	}
+
+	$multiple = $quantity ? q{} : 1;
+}
+
+</%init>
+<form method="post" action="/comment.html" class="affects_parent loads_content">
+	<input type="hidden" name="preference_id" value="<% $preference_id |h %>" />
+	<input type="hidden" name="item_name" value="<% $item_name |h %>" />
+<table id="preference_form" class="data" width="100%" cellpadding="0" cellspacing="0">
+	<&'/preference_form.comp',
+		'preference_id' => $preference_id,
+		'multiple'      => $multiple,
+		'price'         => $price,
+		'comment'       => $comment,
+		'item_name'     => $item_name,
+	&>
+	<tr>
+		<td></td>
+		<td><input name="action_save" type="submit" value="Save" class="button" /></td>
+		<td></td>
+	</tr>
+</table>
+</form>

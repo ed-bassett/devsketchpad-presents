@@ -1,0 +1,22 @@
+<%args>
+$preference_id => undef
+$item_name     => undef
+$comment
+$price
+$multiple
+</%args>
+<tr class="dependant">
+	<td width="120"><p>Comment</p></td>
+	<td width="240"><textarea name="comment" rows="4" cols="25"><% $comment |h %></textarea></td>
+	<td><p class="help">This is any additional information you'd like to give about your preference. It will only be visible when people are looking for presents for you</p></td>
+</tr>
+<tr class="dependant">
+	<td><p>Price ($)</p></td>
+	<td><input type="text" name="price" value="<% $price |h %>" size="10" maxlength="10" /></td>
+	<td><p class="help">Give an indication of the approximate cost for this item</p></td>
+</tr>
+<tr class="dependant">
+	<td><p>More&nbsp;than&nbsp;one</p></td>
+	<td><input type="checkbox" name="multiple" value="1"<% $multiple ? q{ checked="checked"} : q{} |n %> /></td>
+	<td><p class="help">Would it be okay if you got several of these from different people?</p></td>
+</tr>

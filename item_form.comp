@@ -1,0 +1,39 @@
+<%once>
+use Presents::Presents qw(
+	get_categories
+);
+</%once>
+<%args>
+$name        => q{}
+$category_id => q{}
+$description => q{}
+$id          => undef
+</%args>
+<%init>
+
+my $action
+	= defined $id
+	? q{/edit.html}
+	: q{/add.html}
+	;
+
+my @categories = @{get_categories()};
+
+</%init>
+<tr>
+	<td width="120"><p>Gift name</p></td>
+	<td width="240"><input type="text" name="name" value="<% $name |h %>" size="20" /></td>
+	<td><p class="help">This should be something generic enough that other people could add it to their lists as well</p></td>
+</tr>
+<tr>
+	<td><p>Category</p></td>
+	<td>
+		<select name="category_id">
+			<option value="">Select a category...</option>
+% foreach my $cat ( sort { $a->{'name'} cmp $b->{'name'} } @categories ) {
+			<option value="<% $cat->{'id'} |h %>"<% $cat->{'id'} eq $category_id ? q{ selected="selected"} : q{} %>><% $cat->{'name'} |h %></option>
+% }
+		</select>
+	</td>
+	<td><p class="help">Choose an appropriate category. If you can't find one, select 'General' or ask for a new category to be added</p></td>
+</tr>

@@ -1,0 +1,64 @@
+<%once>
+use Presents::Presents qw(
+	get_categories
+	update_item
+	get_item
+);
+</%once>
+<%args>
+$action_save => q{}
+
+$name        => q{}
+$category_id => q{}
+$description => q{}
+$id
+</%args>
+<%init>
+
+my $item = get_item({'id' => $id})->[0];
+$m->out(q{<h2>Edit "} . encode_entities($item->{'name'}) . q{"</h2>});
+
+if( $action_save )
+{
+	if ( $name =~ m{^\s*$}smx )
+	{
+		$m->out(q{<p class="error">Please enter a name</p>});
+	}
+	elsif ( not $category_id )
+	{
+		$m->out(q{<p class="error">Please select a category</p>});
+	}
+	else
+	{
+		update_item({
+			'id'          => $id,
+			'name'        => $name,
+			'category_id' => $category_id,
+		});
+		$m->out(qq{<p class="success">Successfully saved '$name'</p>});
+		return;
+	}
+}
+else
+{
+	($id, $name, $category_id, $description) = @{$item}{qw(id name category_id description)};
+}
+</%init>
+
+<p class="warning">Any changes you make will appear for everyone, even if others have already selected this item</p>
+<form method="post" action="/edit.html" class="affects_parent loads_content">
+	<input type="hidden" name="id" value="<% $id |h %>" />
+	<table class="data" width="100%" cellpadding="0" cellspacing="0">
+	<& '/item_form.comp',
+		'id'          => $id,
+		'name'        => $name,
+		'category_id' => $category_id,
+		'description' => $description  || undef,
+	&>
+	<tr>
+		<td></td>
+		<td><input name="action_save" type="submit" value="Save" class="button" /></td>
+		<td></td>
+	</tr>
+	</table>
+</form>

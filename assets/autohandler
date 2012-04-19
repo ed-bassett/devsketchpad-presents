@@ -1,0 +1,8 @@
+<%flags>
+inherit => undef
+</%flags>
+<%init>
+
+$m->call_next();
+
+</%init>

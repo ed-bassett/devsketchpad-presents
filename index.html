@@ -1,0 +1,53 @@
+<%once>
+
+use Presents::User qw(
+	get_people
+);
+
+use Presents::Presents qw(
+	get_items_for
+	get_pending_items_for
+);
+
+</%once>
+<%args>
+$person_id => undef
+</%args>
+<%method tab>
+<%init>
+	return q{My wish list};
+</%init>
+</%method>
+<%init>
+
+our $user;
+
+my @new_items = @{get_pending_items_for({
+	'id' => $user->{'id'},
+})};
+
+my @items = @{get_items_for({
+	'id' => $user->{'id'},
+})};
+
+my @wanted_items = grep { $_->{'preference'} ne q{n} } @items;
+my @unwanted_items = grep { $_->{'preference'} eq q{n} } @items;
+
+</%init>
+
+<h2 class="controller controls_new">New presents</h2>
+<& 'display_items.comp',
+	'items' => \@new_items,
+	'name'  => q{new},
+&>
+<h2 class="controller controls_update">Update my list</h2>
+<&'display_items.comp',
+	'items'      => \@wanted_items,
+	'name'  => q{update},
+	'show_price' => 1,
+&>
+<h2 class="controller controls_dontwant collapsed">Things I don't want</h2>
+<&'display_items.comp',
+	'items' => \@unwanted_items,
+	'name'  => q{dontwant},
+&>
