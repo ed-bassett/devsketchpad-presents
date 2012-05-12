@@ -7,7 +7,7 @@ use base qw(Apache2::AuthCookie);
 
 use Digest::SHA1;
 
-use Conf qw(
+use Presents::Conf qw(
 	config
 );
  

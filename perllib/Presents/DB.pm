@@ -11,7 +11,7 @@ our @EXPORT_OK = qw(
 
 use DBI;
 
-use Conf qw(config);
+use Presents::Conf qw(config);
 
 sub db_connect
 {
