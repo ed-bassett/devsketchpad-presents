@@ -58,7 +58,13 @@ my $current_tab = eval {$m->comp('REQUEST:tab')};
 <div id="id_bar" class="tabs">
 	<a class="tab has_action loads_content affects_popup_content" href="/password.html">You are logged in as <strong><% $user->{'name'} |h %></strong></a><a class="tab has_action" href="/logout/">Log out</a>
 </div>
-<h1><% config(q{name}) |h %></h1>
+<h1><a href="/">
+% if ( config(q{logo}) ) {
+	<img src="/assets/images/<% config(q{logo}) |h %>" alt="<% config(q{name}) |h %>" />
+% } else {
+	<% config(q{name}) |h %>
+% }
+</h1>
 </div>
 <div id="body" class="frame">
 <div id="menu" class="tabs">
