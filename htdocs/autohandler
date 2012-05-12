@@ -39,7 +39,7 @@ my $current_tab = eval {$m->comp('REQUEST:tab')};
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-<title>Presents</title>
+<title><% config(q{name}) |h %></title>
 <link rel="StyleSheet" href="/assets/style.css" type="text/css" media="screen" />
 <script type="text/javascript" src="/assets/javascript/jquery-1.7.min.js"></script>
 <script type="text/javascript" src="/assets/javascript/main.js"></script>
@@ -58,7 +58,7 @@ my $current_tab = eval {$m->comp('REQUEST:tab')};
 <div id="id_bar" class="tabs">
 	<a class="tab has_action loads_content affects_popup_content" href="/password.html">You are logged in as <strong><% $user->{'name'} |h %></strong></a><a class="tab has_action" href="/logout/">Log out</a>
 </div>
-<h1>Presents</h1>
+<h1><% config(q{name}) |h %></h1>
 </div>
 <div id="body" class="frame">
 <div id="menu" class="tabs">
