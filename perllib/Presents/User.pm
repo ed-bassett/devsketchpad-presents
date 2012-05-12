@@ -13,19 +13,7 @@ our @EXPORT_OK = qw(
 
 use Digest::SHA1;
 
-use Conf qw(config);
-
-sub db_connect
-{
-	my %config = %{config(q{db})};
-
-	return DBI->connect_cached(
-		q{dbi:mysql:} .
-		$config{'name'},
-		$config{'user'},
-		$config{'pass'},
-	);
-}
+use Presents::DB qw(db_connect);
 
 sub check_password
 {
