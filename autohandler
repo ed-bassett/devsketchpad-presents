@@ -51,6 +51,9 @@ var pageName = document.URL;
 var docParts = {};
 
 $(document).ready(function(){
+	$.ajaxSetup ({
+		cache: false
+	});
 	try{initialize();} catch(e){}
 
 	//var gap = ( $(window).height() - $('#content').offset().top - 70 );
@@ -264,3 +267,4 @@ function loadPart (location, load_section, fill_section, done)
 </div>
 </body>
 </html>
+
