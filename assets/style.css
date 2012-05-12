@@ -22,7 +22,7 @@ top:0px;
 left:0px;
 width:100%;
 height:100%;
-background-color:rgba(0,0,0,.5);
+background-color:rgba(0,0,0,.2);
 z-index:-10000;
 }
 
@@ -45,11 +45,7 @@ body
 	margin:0;
 	font-family: helvetica,verdana,arial,sans-serif;
 	color:rgba(<%$f1%>,1);
-	/*background:url('/assets/images/christmas_presents.jpg') top left no-repeat;*/
-	/*background:url('/assets/images/bokeh.jpg') top left no-repeat fixed;*/
-	background: #003000 url('/assets/images/tree2.jpg') bottom left no-repeat fixed;
-	background: #003000 url('http://desktop.freewallpaper4.me/view/original/4526/red-christmas.jpg') bottom left no-repeat fixed;
-	background: #003000 url('/assets/images/christmas_background.jpg') center no-repeat fixed;
+	background: #003000 url('/assets/images/background.jpg') center no-repeat fixed;
 	
 	/*text-shadow: 0px 0px 2px #000;*/
 	height:100%;
