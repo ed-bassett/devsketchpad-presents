@@ -99,7 +99,7 @@ sub get_person
 			lastname,
 			birthday
 		FROM
-			people
+			person
 		WHERE} . (
 			defined $username ? q{
 			username=?}
@@ -133,7 +133,7 @@ sub get_people
 			id,
 			name
 		FROM
-			people
+			person
 	} . ( scalar @ids
 			? ( q{WHERE people.id IN (} . join(q{, }, (q{?}) x scalar @ids) . q{)})
 			: q{}

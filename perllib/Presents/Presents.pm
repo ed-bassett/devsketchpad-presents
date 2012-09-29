@@ -35,7 +35,7 @@ sub get_item
 			name,
 			category_id
 		FROM
-			items
+			item
 		WHERE
 			id like ?
 	}) or die "Couldn't prepare statement: " . $dbh->errstr;
@@ -62,7 +62,7 @@ sub get_items
 	my $sth = $dbh->prepare(q{
 		SELECT id, name
 		FROM
-			items as i
+			item as i
 		WHERE
 			i.name like ?
 	}) or die "Couldn't prepare statement: " . $dbh->errstr;
@@ -99,17 +99,17 @@ sub get_items_for
 			g.id,
 			g.from_person_id
 		FROM
-			items as i
+			item as i
 		LEFT JOIN
-			preferences as p
+			preference as p
 		ON
 			(i.id = p.item_id)
 		LEFT JOIN
-			categories as c
+			category as c
 		ON
 			(i.category_id = c.id)
 		LEFT OUTER JOIN
-			gifts as g
+			gift as g
 		ON
 			(i.id = g.item_id AND p.person_id=g.to_person_id)
 		WHERE
@@ -168,13 +168,13 @@ sub get_gifts_from
 			p.price,
 			p.preference
 		FROM
-			items AS i
+			item AS i
 		LEFT JOIN
-			gifts AS g
+			gift AS g
 		ON
 			(i.id = g.item_id)
 		LEFT JOIN
-			preferences as p
+			preference as p
 		ON
 			(
 				i.id = p.item_id
@@ -199,13 +199,13 @@ sub get_gifts_from
 		SELECT
 			u.name
 		FROM
-			people as u
+			person as u
 		WHERE
 			u.id IN (
 				SELECT
 					from_person_id
 				FROM
-					gifts AS g
+					gift AS g
 				WHERE
 					g.item_id=?
 			)		
@@ -238,9 +238,9 @@ sub get_pending_items_for
 			i.name,
 			c.name
 		FROM
-			items as i
+			item as i
 		LEFT JOIN
-			categories as c
+			category as c
 		ON
 			(i.category_id = c.id)
 		WHERE
@@ -248,7 +248,7 @@ sub get_pending_items_for
 				SELECT
 					item_id
 				FROM
-					preferences
+					preference
 				WHERE
 					person_id=?
 			)
@@ -276,7 +276,7 @@ sub get_categories
 			id,
 			name
 		FROM
-			categories
+			category
 	}) or die "Couldn't prepare statement: " . $dbh->errstr;
 
 	$sth->execute() or die "Couldn't execute statement: " . $sth->errstr;
@@ -299,7 +299,7 @@ sub add_item
 	my $dbh = db_connect();
 
 	my $sth = $dbh->prepare(q{
-		INSERT INTO items (
+		INSERT INTO item (
 			name,
 			category_id
 		)
@@ -327,7 +327,7 @@ sub update_item
 	my %fields = map { (exists $arg->{$_}) ? ( $_ => $arg->{$_} ) : () } qw(name category_id);
 
 	my $sth = $dbh->prepare(q{
-		UPDATE items
+		UPDATE item
 		SET } . join( q{,}, map {$_ . q{=?}} sort keys %fields ) . q{
 		WHERE
 			id=?
@@ -357,7 +357,7 @@ sub get_preference
 			quantity,
 			comment
 		FROM
-			preferences
+			preference
 		WHERE
 			id=?
 	}) or die "Couldn't prepare statement: " . $dbh->errstr;
@@ -378,7 +378,7 @@ sub set_preference
 	my $dbh = db_connect();
 
 	my $sth = $dbh->prepare(q{
-		INSERT INTO preferences (
+		INSERT INTO preference (
 			person_id,
 			item_id,
 			preference,
@@ -414,7 +414,7 @@ sub update_preference
 	my %fields = map { (exists $arg->{$_}) ? ( $_ => $arg->{$_} ) : () } qw(preference quantity price comment);
 
 	my $sth = $dbh->prepare(q{
-		UPDATE preferences
+		UPDATE preference
 		SET } . join( q{,}, map {$_ . q{=?}} sort keys %fields ) . q{
 		WHERE
 			id=?
@@ -436,7 +436,7 @@ sub choose_gift
 	my $dbh = db_connect();
 
 	my $sth = $dbh->prepare(q{
-		INSERT INTO gifts (
+		INSERT INTO gift (
 			from_person_id,
 			to_person_id,
 			item_id
@@ -464,7 +464,7 @@ sub remove_gift_choice
 
 	my $sth = $dbh->prepare(q{
 		DELETE FROM 
-			gifts
+			gift
 		WHERE
 			id=?
 		
