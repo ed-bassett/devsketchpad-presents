@@ -5,6 +5,10 @@ use warnings;
 
 use base qw(Exporter);
 
+use Presents::Conf qw(
+	config
+);
+
 our @EXPORT_OK = qw(
 	get_people
 	get_person
