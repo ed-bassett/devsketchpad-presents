@@ -61,7 +61,7 @@ sub set_password
 
 	my $sth = $dbh->prepare(q{
 		UPDATE
-			people
+			person
 		SET
 			password=?
 		WHERE
@@ -135,7 +135,7 @@ sub get_people
 		FROM
 			person
 	} . ( scalar @ids
-			? ( q{WHERE people.id IN (} . join(q{, }, (q{?}) x scalar @ids) . q{)})
+			? ( q{WHERE person.id IN (} . join(q{, }, (q{?}) x scalar @ids) . q{)})
 			: q{}
 		)
 	) or die "Couldn't prepare statement: " . $dbh->errstr;
