@@ -12,7 +12,7 @@ my $reason = $r->prev->subprocess_env("AuthCookieReason");
 <p>Your username or password was incorrect. Please try again.</p>
 % }
 <form method="post" action="/LOGIN">
-<input type="hidden" name="destination" value="<% $r->prev->uri %>">
+<input type="hidden" name="destination" value="<% $r->prev->uri %>" />
 <table align="left">
 <tr>
 <td align="right"><b>Username:</b></td>
