@@ -6,7 +6,7 @@ $show_removed => 1
 	
 our $user;
 
-$item->{'comment'} =~ s{(https?://[\w./?&=-]*)}{<a href="$1">link</a>}smxg;
+$item->{'comment'} =~ s{(https?://[\w./?&#=%:,+~-]*)}{<a href="$1">link</a>}smxg;
 
 </%init>
 
