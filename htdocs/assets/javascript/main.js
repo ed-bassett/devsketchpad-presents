@@ -75,10 +75,10 @@ function set_click(message)
 		
 	});
 	$('#all').submit(function(e){
-		e.preventDefault();
 		var form = $(e.target);
 		if( form.is('form[class*="affects_"]') )
 		{
+		    e.preventDefault();
 			//var submit = form.find('input:submit:focus') || activeSubmit;
 			var submit = activeSubmit;
 			console.log('submit: '+activeSubmit.attr('name'));
@@ -101,8 +101,9 @@ function set_click(message)
 					affects
 				);
 			}
+    		return false;
 		}
-		return false;	
+        return true;
 	});
 }
 
