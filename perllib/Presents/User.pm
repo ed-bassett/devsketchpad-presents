@@ -138,8 +138,10 @@ sub get_people
 			name
 		FROM
 			person
+        WHERE
+            archived_at IS NULL
 	} . ( scalar @ids
-			? ( q{WHERE person.id IN (} . join(q{, }, (q{?}) x scalar @ids) . q{)})
+			? ( q{AND person.id IN (} . join(q{, }, (q{?}) x scalar @ids) . q{)})
 			: q{}
 		)
 	) or die "Couldn't prepare statement: " . $dbh->errstr;

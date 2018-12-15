@@ -3,7 +3,7 @@ package Presents::AuthCookieHandler;
 use strict;
 use warnings;
 
-use base qw(Apache2::AuthCookie);
+use base qw(Apache2_4::AuthCookie);
 
 use Digest::SHA1;
 
