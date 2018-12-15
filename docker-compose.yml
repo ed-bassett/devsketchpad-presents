@@ -1,0 +1,30 @@
+version: '3.5'
+services:
+  giftsanity-production:
+    build:
+      context: "."
+      target: giftsanity-production
+    command: "node main.js"
+    image: giftsanity:latest
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+    environment:
+      - PORT=8080
+  giftsanity-dev:
+    build:
+      context: "."
+      target: giftsanity-dev
+    image: giftsanity-dev:latest
+    ports:
+      - target: 80
+        published: 8111
+        protocol: tcp
+        mode: host
+      - "3306"
+    environment:
+      - PORT=8080
+    volumes:
+      - "./src/:/srv/www/presents:rw,cached"

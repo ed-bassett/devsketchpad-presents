@@ -1,0 +1,47 @@
+<VirtualHost *:80>
+  ServerName giftsanity.com
+  PerlModule Apache::DBI
+  PerlRequire /srv/www/presents/conf/start.pl
+
+  ServerAdmin webmaster@localhost
+  DocumentRoot /srv/www/presents/htdocs
+
+  PerlModule Presents::AuthCookieHandler
+  PerlSetVar PresentsPath /
+  PerlSetVar PresentsLoginScript /auth/login.html
+  PerlSetVar PresentsSatisfy Any
+  PerlSetVar MasonDataDir /var/cache/mason/presents/
+
+  PerlSetEnv env production
+
+  <LocationMatch "^/(?!(LOGIN|system))">
+    AuthType Presents::AuthCookieHandler
+    AuthName Presents
+    PerlAuthenHandler Presents::AuthCookieHandler->authenticate
+    PerlAuthzHandler  Presents::AuthCookieHandler->authorize
+    require valid-user
+  </LocationMatch>
+
+  <Files LOGIN>
+    AuthType Presents::AuthCookieHandler
+    AuthName Presents
+    SetHandler  perl-script
+    PerlResponseHandler Presents::AuthCookieHandler->login
+  </Files>
+
+  <locationMatch "\/auth\/login\.html">
+    SetHandler  perl-script
+    PerlHandler HTML::Mason::ApacheHandler
+  </locationMatch>
+
+  <LocationMatch "\.(html|css)$">
+    SetHandler   perl-script
+    PerlHandler  HTML::Mason::ApacheHandler
+    PerlSetVar   MasonCompRoot /srv/www/presents/htdocs
+  </LocationMatch>
+
+  <LocationMatch "^/(assets\/images)/>
+    SetHandler   default-handler
+  </LocationMatch>
+</VirtualHost>
+
